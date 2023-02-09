@@ -2,45 +2,41 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-
-	"github.com/gosuri/uitable"
-	"github.com/spf13/cobra"
 )
 
-var lsCmd = &cobra.Command{
-	Use:   "list",
-	Short: "",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
+type ListCryptoResponse struct {
+	Data Data `json:"data"`
+}
 
-		client := NewClient("https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=10&sortBy=market_cap&sortType=desc&convert=USD&cryptoType=all&tagType=all&audited=false&aux=ath,atl,high24h,low24h,num_market_pairs,cmc_rank,date_added,max_supply,circulating_supply,total_supply,volume_7d,volume_30d,self_reported_circulating_supply,self_reported_market_cap")
+type Data struct {
+	CryptoCurrencyList []CryptoCurrency `json:"cryptoCurrencyList"`
+}
 
-		res, err := client.Get(client.endpoint)
-		if err != nil {
-			return
-		}
+type CryptoCurrency struct {
+	Name    string  `json:"name"`
+	Symbol  string  `json:"symbol"`
+	CMCRank int     `json:"cmcRank"`
+	Quotes  []Quote `json:"quotes"`
+}
 
-		defer res.Body.Close()
+type Quote struct {
+	Name             string  `json:"name"`
+	PercentChange1h  float32 `json:"percentChange1h"`
+	PercentChange24h float32 `json:"percentChange24h"`
+	PercentChange7d  float32 `json:"percentChange7d"`
+}
 
-		decoder := json.NewDecoder(res.Body)
-		var r issueRequest
-		decoder.Decode(&r)
+func (c *Client) ListCoins() ([]CryptoCurrency, error) {
 
-		table := uitable.New()
-		table.MaxColWidth = 50
+	res, err := c.Get(c.endpoint + "/cryptocurrency/listing?start=1&limit=10&sortBy=market_cap&sortType=desc&convert=USD&cryptoType=all&tagType=all&audited=false&aux=ath,atl,high24h,low24h,num_market_pairs,cmc_rank,date_added,max_supply,circulating_supply,total_supply,volume_7d,volume_30d,self_reported_circulating_supply,self_reported_market_cap")
+	if err != nil {
+		return nil, err
+	}
 
-		table.AddRow("#", "NAME", "SYMBOL", "1h %", "24h %", "7d %")
-		for _, currency := range r.Data.CryptoCurrencyList {
-			table.AddRow(
-				currency.CMCRank,
-				currency.Name,
-				currency.Symbol,
-				fmt.Sprintf("%.2f", currency.Quotes[0].PercentChange1h),
-				fmt.Sprintf("%.2f", currency.Quotes[0].PercentChange24h),
-				fmt.Sprintf("%.2f", currency.Quotes[0].PercentChange7d),
-			)
-		}
-		fmt.Println(table)
-	},
+	defer res.Body.Close()
+
+	decoder := json.NewDecoder(res.Body)
+	var r ListCryptoResponse
+	decoder.Decode(&r)
+	return r.Data.CryptoCurrencyList, nil
 }

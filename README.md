@@ -24,3 +24,21 @@ go-coinmarketcap list
 9       Dogecoin        DOGE    0.47    -3.87   -4.97
 10      Polygon         MATIC   0.63    1.05    7.95
 ```
+
+```bash
+go-coinmarketcap airdrop
+```
+
+```
+#       NAME                                              
+0       Wombex X CoinMarketCap : New Year Celebration A...
+1       IguVerse x CoinMarketCap World Cup Finals dedic...
+2       Ancient Raid - $30,000 NFT Mega Airdrop (Exclus...
+3       TokenBot x CoinMarketCap: $100,000 TKB Airdrop    
+4       Bullieverse x CoinMarketCap Fresh Blood Tournam...
+5       Bull BTC Club & CoinMarketCap Airdrop Campaign    
+6       $100,000+ USD Airdrop by SaTT                     
+7       TopGoal x CoinMarketCap Football Festival Campaign
+8       OneRare - $75,000 Ingredient NFT Airdrop🍎        
+9       Astra Protocol x CoinMarketCap: The Mega Airdro...
+```
